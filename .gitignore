@@ -1,4 +1,4 @@
-./static/*
+static/*
 *.jpg
-./venv/*
-./paragon/settings.py
+venv/*
+paragon/settings.py
