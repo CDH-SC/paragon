@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Paragon</title>
+
+	<link rel="stylesheet" href="{% static 'css/reset.css' %}">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+	<link rel="stylesheet" href="{% static 'css/dropzone.css' %}">
+	<link rel="stylesheet" href="{% static 'css/paragon.css' %}?ver=0.6">
+
+	<script src="{% static 'js/modernizr.js' %}"></script>
+	<script src="//use.typekit.net/gpm4bth.js"></script>
+	<script>try{Typekit.load();}catch(e){}</script>
+</head>
+<body class="tk-proxima-nova">
+	<noscript>
+		<div style="position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;width:360px;height:25px;">You don't have JavaScript enabled. Good luck with that.</div>
+		<style> header, nav, .container, .content-scroll, footer { display: none !important; } </style>
+	</noscript>
+{% if user.is_authenticated %}
+{% endif %}

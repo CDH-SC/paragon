@@ -1,0 +1,192 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<body class="tk-proxima-nova">
+  <header>
+    <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive logo" alt="Paragon" />
+    <div class="menu">
+      <!--<a href="#"><i class="fa fa-home"></i>home</a>-->
+      <a href="{% url 'user_interface' %}"><i class="fa fa-user"></i>{{username}}</a>
+      <a href="{% url 'logout_process' %}"><i class="fa fa-sign-out"></i>logout</a>
+    </div>
+  </header>
+  <nav class="upload-steps">
+    <span>Choose Format</span>
+    <span class="current-step">Upload</span>
+    <span>Collate</span>
+    <!-- Above <span> has replaced this:
+    <ul class="list-inline">
+      <li class="current-step">Upload</li>
+      <li>Collate</li>
+    </ul> -->
+  </nav>
+
+
+  <div class="container">
+  <!-- Above .container has replaced this:
+  <div class="main-content"> -->
+    <!-- .upload-content has been moved to each .col-xs-6
+    <div class="upload-content"> -->
+      <div class="col-xs-6 upload-content">
+        <div>
+          <div class="dropzone">
+            <img id="template-dropzone" class="dropzone-img" {% if exists %} src="{% url 'image' template_id %}" {% endif %}></img>
+          </div>
+          <!-- Don't use <center> :: it's widely frowned upon in the web development community.
+          The class .center-block will center the item and .col-xs-6 will give it it's width.
+          <center> -->
+            <ul class="col-xs-6 list-inline center-block upload-buttons">
+              <li>
+                <button type="button" class="btn btn-upload" data-toggle="tooltip">
+                  <i class="fa fa-file"></i>Browse
+                  <!-- <input id="template" class="image-upload" type="file"/> -->
+                </button>
+              </li>
+              <li>
+                <button type="button" class="btn btn-upload disabled">
+                  <i class="fa fa-remove"></i>Remove
+                </button>
+              </li>
+              <li class="hide">
+                <input type="file" class="hide" id="template" name="ignore" accept="image/*">
+              </li>
+            </ul>
+            <!-- </center> -->
+          </div>
+        </div>
+
+        <div class="col-xs-6 upload-content">
+          <!-- <div> -->
+          <div class="dropzone">
+            <img id="target-dropzone" class="dropzone-img" {% if exists %} src="{% url 'image' target_id %}" {% endif %}></img>
+          </div>
+          <!-- <center> -->
+          <ul class="col-xs-6 list-inline center-block upload-buttons">
+            <li>
+              <button type="button" class="btn btn-upload" data-toggle="tooltip">
+                <i class="fa fa-file"></i>Browse
+                <!-- <input id="target" class="image-upload" type="file"/> -->
+              </button>
+            </li>
+            <li>
+              <button type="button" class="btn btn-upload disabled">
+                <i class="fa fa-remove"></i>Remove
+              </button>
+            </li>
+            <li class="hide">
+              <input type="file" class="hide" id="target" name="ignore" accept="image/*">
+            </li>
+          </ul>
+          <!-- </center> -->
+          <!-- </div> -->
+        </div>
+
+        <div class="next-upload">
+          <span class="arrow-right" onclick="javascript:onSubmitPair()">Collate</span>
+        </div>
+      <!-- Above .next-upload has replaced this:
+      <div class="col-xs-1" style="float:right;">
+        <span onclick="javascript:onSubmitPair()" class="arrow-right clickable">Collate</span>
+      </div> -->
+      <!-- </div> -->
+    </div>
+
+<!--<div class="progress">
+  <div>
+    <div class="progress-bar progress-bar-striped active collate-progress-bar" role="progressbar"
+    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+      Collating pair...
+    </div>
+  </div>
+</div>-->
+
+<footer>
+  <ul class="list-inline">
+    <li><img src="{% static 'img/USC_Linear.png' %}" class="img-responsive" /></li>
+    <li><img src="{% static 'img/neh_logo_horizontal.png' %}" class="img-responsive" /></li>
+    <li><img src="{% static 'img/cdh_logo_W.png' %}" class="img-responsive" /></li>
+  </ul>
+</footer>
+
+<script src="{% static 'js/globalization.js' %}"></script>
+<script>
+var templateId = 0;
+var targetId = 0;
+var pairId = 0;
+
+//$(".progress").hide();
+//$('#ready-template-dropzone').hide();
+//$('#ready-target-dropzone').hide();
+
+
+// Old:
+// $('#template').on('change', function(){
+// //   $('#ready-template-dropzone').fadeIn();
+// //   $('#btn-upload-template').focus();
+//   onSubmitImage($(this), "template");
+// });
+
+// $('#target').on('change', function(){
+//   // $('#ready-target-dropzone').fadeIn();
+//   // $('#btn-upload-target').focus();
+//   onSubmitImage($(this), "target");
+// });
+
+// New:
+$("ul.upload-buttons input[type='file']").on("change", function () {
+  onSubmitImage($(this), $(this).prop("id"));
+});
+
+function on_upload_image_success(data){
+  var jsonData = JSON.parse(data);
+  var query = "#" + jsonData.type + "-dropzone";
+  var date = new Date();
+  var path = "/paragon/temp-image/" + '{{username}}?' + date.getTime() + ".png";
+  $(query).attr('src', path);
+}
+
+function on_collate_success(){
+  navigate("{% url 'user_interface' %}");
+}
+
+function on_upload_pair_success(data){
+  var formdata = new FormData();
+  var jsonData = JSON.parse(data);
+  pairId = jsonData.pair_id;
+  var path = "/paragon/collate-pair/process/" + pairId;
+  $(".progress").fadeIn();
+  djangoPOST(path, formdata, on_collate_success, call_backend_error);
+}
+
+function onSubmitImage(query, type){
+  var formdata = new FormData();
+  formdata.append("type", type);
+  formdata.append("img", $(query).get(0).files[0]);
+  djangoPOST("{% url 'upload_image_process' %}", formdata, on_upload_image_success, call_backend_error);
+  // djangoPOST("{% url 'upload_image_process' %}", formdata);
+}
+
+function onSubmitPair(){
+  var formdata = new FormData();
+  {% if exists %}
+  djangoPOST("{% url 'collate_pair_process' pair_id %}", formdata, on_upload_pair_success, call_backend_error);
+  setTimeout(on_collate_success, 1000);
+  {% else %}
+  if ($(".container > .upload-content:first-child img").prop("src") != "" && $(".container > .upload-content:last-child img").prop("src") != "") {
+  // if($("input[type='file']")[0].files.length > 0 && $("input[type='file']")[1].files.length > 0){
+
+    $("input[type='file']").each(function(){
+      formdata.append($(this).attr('id'), $(this).get(0).files[0]);
+    });
+    djangoPOST("{% url 'upload_pair_process' %}", formdata, on_upload_pair_success, call_backend_error);
+    setTimeout(on_collate_success, 1000);
+  }else{
+    alert("Please select an image to upload for both template and target.");
+  }
+  {% endif %}
+}
+</script>
+
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% load static %}
+<div class="dropdown pull-right">
+  <button class="btn dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown" aria-expanded="true">
+    <i class="fa fa-user"></i>{{username}}
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="userMenu">
+    <li role="presentation">
+      <a role="menuitem" tabindex="-1" href="{% url 'user_interface' %}"><i class="fa fa-book"></i>View Collations</a>
+    </li>
+    <li role="presentation">
+      <a role="menuitem" tabindex="-1" href="{% url 'edit_profile' %}"><i class="fa fa-pencil"></i>Edit Profile</a>
+    </li>
+    <li role="presentation" class="divider"></li>
+    <li role="presentation">
+      <a role="menuitem" tabindex="-1" href="{% url 'logout_process' %}"><i class="fa fa-sign-out"></i>Logout</a>
+    </li>
+  </ul>
+</div>

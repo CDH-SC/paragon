@@ -1,0 +1,118 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<header>
+  <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+</header>
+
+<nav>
+  <div class="upload-nav pull-left">
+    <a href="{% url 'user_interface' %}">View Collations</a>
+    <a href="{% url 'new_interface' %}">Select Collation Type</a>
+    <span class="current-step">Upload</span>
+  </div>
+
+  {% include "userdropdown.html" %}
+</nav>
+
+<div class="container">
+
+  <!-- This is for dropzone.js ... To display this type testDropzone() in the browser console. -->
+  <div class="col-sm-6 upload-content" id="show" style="display:none;">
+    <ul class="col-sm-6 list-inline center-block upload-buttons">
+      <li>
+        <button type="button" class="btn btn-upload btn-browse" data-toggle="tooltip">
+          <i class="fa fa-file"></i>Browse
+        </button>
+      </li>
+      <li>
+        <button type="button" class="btn btn-upload disabled">
+          <i class="fa fa-remove"></i>Remove
+        </button>
+      </li>
+      <li class="hide">
+        <!-- <input type="file" class="hide" id="templater" accept="image/*"> -->
+      </li>
+    </ul>
+
+    <!-- https://amatellanes.wordpress.com/2013/11/05/dropzonejs-django-how-to-build-a-file-upload-form/ -->
+    <form class="dropzone" action="{% url 'upload_pair_process' %}" method="">
+      <span style="color:white;">Dropzone</span>
+    </form>
+
+  </div>
+
+  <div class="col-sm-6 upload-content" id="hide">
+
+    <ul class="col-sm-6 list-inline center-block upload-buttons">
+      <li>
+        <button type="button" class="btn btn-upload btn-browse">
+          <i class="fa fa-file"></i>Browse
+        </button>
+      </li>
+      <li>
+        <button type="button" class="btn btn-upload disabled">
+          <i class="fa fa-remove"></i>Remove
+        </button>
+      </li>
+      <li class="hide">
+        <input type="file" class="hide" id="template" accept="image/*">
+      </li>
+    </ul>
+
+    <form class="drop">
+      <img id="template-dropzone" class="dropzone-img img-responsive" {% if exists %} src="{% url 'image' template_id %}" {% endif %}></img>
+    </form>
+
+  </div>
+
+  <div class="alert alert-info alert-dismissable upload-alert" style="display:none;">
+    <button type="button" class="close">x</button>
+    <span></span>
+  </div>
+
+  <div class="col-sm-6 upload-content">
+
+    <ul class="col-sm-6 list-inline center-block upload-buttons">
+      <li>
+        <button type="button" class="btn btn-upload btn-browse disabled">
+          <i class="fa fa-file"></i>Browse
+        </button>
+      </li>
+      <li>
+        <button type="button" class="btn btn-upload disabled">
+          <i class="fa fa-remove"></i>Remove
+        </button>
+      </li>
+      <li class="hide">
+        <input type="file" class="hide" id="target" accept="image/*">
+      </li>
+    </ul>
+
+    <form class="drop">
+      <img id="target-dropzone" class="dropzone-img img-responsive" {% if exists %} src="{% url 'image' target_id %}" {% endif %}></img>
+    </form>
+
+  </div>
+
+  <div class="next-upload">
+    <span class="arrow-right" onclick="javascript:submitPair()">Collate</span>
+  </div>
+
+</div>
+
+{% include "footer.html" %}
+
+<script>
+/**
+ * Function to display the Dropzone form while being constructed on.
+ */
+function testDropzone() {
+  $("#show").show();
+  $("#hide").hide();
+}
+</script>
+
+</body>
+</html>
+{% endblock %}

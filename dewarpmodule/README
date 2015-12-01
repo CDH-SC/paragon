@@ -1,0 +1,11 @@
+I give an example to run dewarping process. 
+It contains two steps:
+Step one:
+	os.system("python ./src/ocropy-master/ocropus-gpageseg ./data/Y1C7v.jpeg")
+Step two:
+	os.system("python ./src/leptonlib-1.67/src/testCommand.py ./data/Y1C7v.pseg.png ./data/output.jpg")	
+
+suppose both input and output files are stored in the data folder. 
+
+to run second command, you'll need to install leptonlib package. Please check README.html file in this folder.
+
