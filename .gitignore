@@ -2,6 +2,7 @@ static/
 *.jpg
 venv/
 paragon/settings.py
+paragon/settings.pyc
 *.so.*
 *.so
 dewarpmodule/OLD/
@@ -9,7 +10,15 @@ dewarpmodule/src/src/
 dewarpmodule/src/prog/*.jpg
 dewarpmodule/src/Dewarp/*.jpg
 dewarpmodule/src/ocropy-master/tests/
+dewarpmodule/data/
+dewarpmodule/srcbak/
+dewarpmodule/src/ocropy-master/HR*/
+dewarpmodule/src/FQ190_WU_1/
+dewarpmodule/src/examples/
 modulepipe/*.jpg
 modulepipe/example/
+modulepipe/Y1C7v/
+
+template/
 
 
