@@ -1,3 +1,4 @@
 ./static/*
 *.jpg
 ./venv/*
+./paragon/settings.py
