@@ -1,0 +1,46 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<header>
+  <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+</header>
+
+<nav>
+  <div class="upload-nav pull-left">
+    <a href="{% url 'user_interface' %}">View Collations</a>
+    <span class="current-step">Select Collation Type</span>
+    <span>Upload</span>
+  </div>
+
+  {% include "userdropdown.html" %}
+</nav>
+
+<div class="container">
+  <div class="col-sm-4 center-block">
+    <ul class="list-unstyled choice-list">
+      <li class="text-center">
+        <h3><i class="fa fa-upload"></i>What are you collating?</h3>
+      </li>
+      <li>
+        <button type="button" data-toggle="tooltip" data-placement="right" data-original-title="Single transcripts." onclick="javascript:navigate('{% url 'upload_pair_interface' %}')">
+          <i class="fa fa-file"></i>Single Pair
+        </button>
+      </li>
+      <li>
+        <button type="button" data-toggle="tooltip" data-placement="right" data-original-title="Multiple Transcripts to compare to each other." onclick="javascript:navigate('{% url 'upload_multi_interface' %}')">
+          <i class="fa fa-files-o"></i>Multiple Pairs
+        </button>
+      </li>
+      <li>
+        <button type="button" data-toggle="tooltip" data-placement="right" data-original-title="Page by page comparison of two full books." onclick="javascript:navigate('{% url 'upload_book_interface' %}')">
+          <i class="fa fa-book"></i>Book
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% include "footer.html" %}
+</body>
+</html>
+{% endblock %}

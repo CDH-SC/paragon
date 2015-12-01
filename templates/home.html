@@ -1,0 +1,335 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<body class="tk-proxima-nova">
+
+	<div class="content-scroll clearfix">
+		<header>
+			<a href="http://tundra.csd.sc.edu/paragon">
+				<img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+			</a>
+
+			<form class="form-horizontal" action="javascript:login()" id="loginForm">
+				<div class="form-group">
+					<label class="col-xs-12 control-label" style="text-align:left;">
+						New user? <span data-toggle="modal" data-target="#register">Click here to register</span>
+					</label>
+				</div>
+				<div class="form-group">
+					<label for="username" class="col-xs-4 control-label">Username</label>
+					<div class="col-xs-8">
+						<input type="text" id="user" name="user" required autofocus>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="password" class="col-xs-4 control-label">Password</label>
+					<div class="col-xs-8">
+						<input type="password" id="pwd" name="pwd" required>
+					</div>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-dark pull-right">
+						<i class="fa fa-sign-in"></i>Login
+					</button>
+				</div>
+			</form>
+		</header>
+
+		<nav>
+			<ul class="list-inline" style="margin-top:3px;">
+				<li id="toAboutParagon">About PARAGON</li>
+				<li id="toHowToUse">How to Use</li>
+				<li id="toAboutCDH">About CDH</li>
+				<li><a href="{% static 'files/betatest.pdf' %}" style="color:black !important;">Instructions for Beta Testing</a></li>
+			</ul>
+			<div class="alert alert-dismissible alert-warning" style="display:none;">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+				<h4>Warning!</h4>
+				<span></span>
+			</div>
+		</nav>
+
+		{% csrf_token %}
+		<div class="col-xs-7">
+			<h3 style="font-weight:600;padding-top:10%;padding-bottom:10%;">
+				PARAGON is a software system capable of intelligent collation and difference detection among materials from multiple repositories, digitized according to varying standards with a range of methods and equipment.
+			</h3>
+			<p>
+				We created a prototype for this system to address methodological problems specific to the editing of printed materials from the early modern period in Europe, but in developing this prototype we propose to explore ways of extending its application to print materials from later periods, as well as its potential value to other projects, including the English Broadside Ballad Archive at UCSB and the Software Studies Lab at UCSD.
+			</p>
+		</div>
+		<div class="col-xs-5">
+			<img src="{% static 'img/home_graphic.svg' %}" class="img-responsive" alt="" width="636" />
+		</div>
+		<div class="next-page"><i class="fa fa-chevron-down"></i></div>
+	</div>
+
+	<div class="content-scroll" id="isAboutParagon">
+		<div class="col-xs-6">
+			<p><strong><i class="fa fa-info-circle"></i>about PARAGON</strong></p>
+			<p class="first-letter" style="padding-bottom:20px;">
+				Collation of early modern printed materials is crucial to the disciplines that study them because manuscript copy seldom survives. Print typically offers the only access to what an author wrote—yet extant copies differ in many places, while in others they are manifestly erroneous. Early editors combined erudition with sometimes-inspired guesswork in emending texts, but they did so haphazardly; systematic collation began at the turn of the twentieth century with the rise of the "New Bibliography." Modern editorial theory, based on a rigorous empirical method informed by careful study of the practices and conditions in print shops, developed out of the New Bibliography when D. F. McKenzie demonstrated that seemingly innocuous commonsense assumptions woven through the deliberations of earlier bibliographers had in fact given rise to fantastical creatures—"Printers of the Mind," as the title of one seminal essay put it.
+			</p>
+			<p>
+				Textual collation provides one kind of evidence indispensable to modern bibliographic method: the systematic comparison of multiple copies from a single print run in order to specify differences among them. This evidence is indispensable because proofreading in early modern print shops was done on the fly, with corrections made by stopping the presses to remove and unlock the chase containing blocks of type, a practice that occasionally introduced new errors in the process of correcting old ones. Since paper was too expensive to waste, sheets representing different states of the text were gathered and bound together at random. For any given publication surviving from this period, it is therefore possible that no two copies from the same print run will be identical. Collation isolates differences so that the bibliographer can use them to build a detailed genealogy of the text's production. It is on the basis of such a genealogy that editorial decisions are made.
+			</p>
+		</div>
+		<div class="col-xs-6">
+			<p>
+				Collation is indispensable, but time-consuming and expensive. Textual scholars have contrived ingenious methods and machines to assist in this labor, but it still requires travel to distant repositories for the painstaking visual examination of multiple original copies. The result is that that editorial best practices recognized for decades have seldom been implemented on a large scale with any but the most canonical texts held in major collections. As scanning costs come down and rare printed materials are preserved in digital form, we have the opportunity to change the way textual editing is done. All we need is the software.
+			</p>
+			<p>
+				Efforts to computerize textual collation have so far depended on first transcribing the texts to be compared or running them through Optical Character Recognition software—either way introducing a layer of labor, expense, and error. PARAGON circumvents this step by automating the first stages of collation directly from scanned images of the original text. It also affords new functionalities for coping with variations in the quality and rendering of digital materials captured in different ways at different times, enabling comparison across dozens of archives and collections holding rare originals. Its technical solutions to the challenges of collation are, moreover, extensible to other projects, as we will demonstrate in two ways: by partnering with other investigators to test the system against their project needs, and by hosting a workshop in which computational scientists active in digital humanities can assess the system and explore its potential uses.
+			</p>
+			<p>
+				<strong>Related Publications</strong>
+				<br />
+				Miller, D. L. and Salvi, D. "PARAGON: Intelligent Collation and Difference Detection." Presentation at the Renaissance Society of America, New York City, NY, March 27-29, 2014.
+			</p>
+		</div>
+		<div class="next-page"><i class="fa fa-chevron-down"></i></div>
+	</div>
+
+	<div class="content-scroll" id="isHowToUse">
+		<div class="col-xs-5 col-xs-offset-1">
+			<div class="col-xs-9 center-block">
+				<p><strong><i class="fa fa-cog"></i>how to use PARAGON</strong></p>
+				<p style="margin-bottom:2px;"><strong>Single Collation</strong></p>
+				<ul>
+					<li>Click the “New Single Collation” button or select a “Single Pair” from the collation selection page.</li>
+					<li>Upload your template using the “Browse” button.</li>
+					<li>Upload your target using the “Browse” button.</li>
+					<li>Click “Collate"!</li>
+				</ul>
+				<p style="margin-bottom:2px;"><strong>Multi-Collation</strong></p>
+				<ul>
+					<li>Click the “New Multi-Collation Collation” button or select “Multiple Pairs” from the collation selection page.</li>
+					<li>Upload your template using the “Browse” button.</li>
+					<li>Upload your targets using the “Browse” or “+” buttons.</li>
+					<li>Click “Collate"!</li>
+				</ul>
+				<p style="margin-bottom:2px;"><strong>Book Collation</strong></p>
+				<ul>
+					<li>Click the “New Book Collation” button or select “Book” from the collation selection page.</li>
+					<li>Upload your template book using the “Browse” or “1” buttons.</li>
+					<li>Upload your target using the “Browse” or “1” buttons.</li>
+					<li>If necessary, arrange your pages and fill in spaces for mismatched pages.</li>
+					<li>Click “Collate"!</li>
+				</ul>
+				<a href="{% static 'files/betatest.pdf' %}">For more detailed instructions, please see the user guide.</a>
+			</div>
+		</div>
+		<div class="col-xs-6">
+			<img src="{% static 'img/howto_graphic.png' %}" class="img-responsive" width="300" alt="" />
+		</div>
+		<div class="next-page"><i class="fa fa-chevron-down"></i></div>
+	</div>
+
+	<div class="content-scroll" id="isAboutCDH">
+		<div class="col-xs-6">
+			<p><strong><i class="fa fa-info-circle"></i>about CDH</strong></p>
+			<img src="{% static 'img/aboutCDH_image.png' %}" class="img-responsive" />
+			<br />
+			<p style="font-weight:500;">
+				We expect an academic field to be defined either by its object of study or by its methodology. Digital Humanities is an interdisciplinary field that encompasses many kinds of content; it is a space of experimentation in which new methods are being deployed. According to one definition, Digital Humanities is the future of our cultural heritage. The ways in which we archive, search, and access the records of the past are being transformed in the Information Age. Digital Humanities is the interdisciplinary field that seeks both to shape these transformations and to study their effects.
+			</p>
+			<p><a href="http://sc.edu/about/centers/digital_humanities/index.php" target="_blank">Our Website</a></p>
+		</div>
+		<div class="col-xs-6">
+			<p>
+				<strong>Our Mission</strong>
+				<br />
+				First, we support specific research and pedagogical projects that harness new media in the work of the humanities. These projects arise within many departments, but they share common needs for infrastructure (hardware, software, and expertise). We provide that infrastructure; we nurture promising projects, reaching across disciplines to build collaborations that will meet the needs of each new idea, developing prototypes that will help to make projects fundable and helping scholars write grant proposals to take them further.
+			</p>
+			<p>
+				Second, we reach out to USC faculty, keeping them in touch with fast-paced changes in technology that affect their research and teaching. This is the way we plant the seeds for new projects, and it is the way we hope to change the culture of research and teaching in the humanities at USC.
+			</p>
+			<p>
+				Third, we support curriculum development. A growing university needs new courses-and faculty to design and teach them-in order to give aspiring students from a whole range of academic disciplines the skills they will need to take their fields of study forward in the new age.
+			</p>
+			<p>
+				<strong>Our work</strong>
+				<br />
+				We are building websites, creating research databases, developing digital tools that perform specific tasks, creating educational games, and hosting institutes that train participants to make use of the resources afforded by new media. We also organize the annual Future Knowledge lecture series, bringing top digital humanities scholars from across the country to the University to talk about what they're doing.
+			</p>
+			<div class="to-top">To Top</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="register" tabindex="-1" role="dialog">
+		<form class="form-horizontal" action="javascript:register()" id="registerForm">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<legend class="text-center">Register</legend>
+					</div>
+					<div class="modal-body">
+						<fieldset>
+							<div class="alert alert-dismissible alert-warning" style="display:none;">
+								<button type="button" class="close" data-dismiss="alert">×</button>
+								<h4>Warning!</h4>
+								<span></span>
+							</div>
+							<div class="form-group">
+								<label for="username" class="control-label col-sm-2">Username</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="username" id="username" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="password1" class="control-label col-sm-2">Password</label>
+								<div class="col-sm-10">
+									<input type="password" class="form-control" name="password1" id="password1" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="password2" class="control-label col-sm-2 double-lined">Password (Again)</label>
+								<div class="col-sm-10">
+									<input type="password" class="form-control" name="password2" id="password2" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="email" class="control-label col-sm-2">Email</label>
+								<div class="col-sm-10">
+									<input type="email" class="form-control" name="email" id="email" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="affiliation" class="control-label col-sm-2 double-lined">University Affiliation</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="affiliation" id="affiliation">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="answer" class="control-label col-sm-2" id="question"></label>
+								<div class="col-sm-2" data-toggle="tooltip" data-placement="right" data-original-title="Just making sure you're not a bot!">
+									<input type="tel" class="form-control" name="answer" id="answer" required>
+								</div>
+							</div>
+						</fieldset>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-dark"><i class="fa fa-sign-in"></i>Register</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	{% include "footer.html" %}
+	<script>
+	$(document).ready(function () {
+		$("#registerForm #question").text(Math.ceil(Math.random() * 10) + " + " + Math.ceil(Math.random() * 10) + " =");
+	});
+
+	function register(e) {
+		console.info("Begin Register");
+		var username    = $.trim($("#registerForm #username").val());
+		var password1   = $.trim($("#registerForm #password1").val());
+		var password2   = $.trim($("#registerForm #password2").val());
+		var email       = $.trim($("#registerForm #email").val());
+		var affiliation = $.trim($("#registerForm #affiliation").val());
+		var question    = $.trim($("#registerForm #question").text());
+		var answer      = $.trim($("#registerForm #answer").val());
+		var alerter     = $("#registerForm .alert span");
+		var proceed     = true;
+
+		console.log("Debugging..." +
+			"\nUsername:  " + username +
+			"\nPassword1: " + password1 +
+			"\nPassword2: " + password2 +
+			"\nEmail:     " + email +
+			"\nAffiliate: " + affiliation +
+			"\nQuestion:  " + question +
+			"\nAnswer:    " + answer);
+
+		// Reset the alert.
+		alerter.parent().slideUp("fast", function () {
+			alerter.empty();
+		});
+
+		// Verify blank fields.
+		if (username == "" || password1 == "" || password2 == "" || email == "") {
+			alerter.append("<p>Please assure all fields are filled in correctly.</p>");
+			proceed = false;
+			console.warn("One of username, password1, password2, and/or email was blank!");
+		}
+
+		// Verify email.
+		if (!/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i.test(email)) {
+			alerter.append("<p>Your email does not seem to be a valid email.</p>");
+			proceed = false;
+			console.warn("Email did not match the regex testing!");
+		}
+
+		// Verify math.
+		if ((parseInt(question.split(" ")[0]) + parseInt(question.split(" ")[2])) != parseInt(answer)) {
+			alerter.append("<p>Please review that your math is correct.</p>");
+			proceed = false;
+			console.warn("The math was incorrect!");
+		}
+
+		// Verify passwords.
+		if (password1 != password2) {
+			alerter.append("<p>The passwords given do not match.</p>");
+			proceed = false;
+			console.warn("Passwords did not match!");
+		}
+
+		if (proceed) {
+			var formdata = new FormData();
+			formdata.append("user",  username);
+			formdata.append("pwd",   password1);
+			formdata.append("email", email);
+			formdata.append("affiliation", affiliation);
+			djangoPOST("{% url 'register_process' %}", formdata, registerSuccess);
+		} else {
+			alerter.parent().slideDown("fast");
+		}
+		e.preventDefault();
+		return false;
+	}
+
+	function registerSuccess(input) {
+		console.info("Function Registration Successful. Server Response:");
+		console.log(JSON.parse(input));
+		var formdata = new FormData();
+		formdata.append("user", $.trim($("#registerForm #username").val()));
+		formdata.append("pwd",  $.trim($("#registerForm #password1").val()));
+		if (JSON.parse(input)["success"]) {
+			djangoPOST("{% url 'login_process' %}", formdata, registerLoginSuccess);
+		}
+	}
+
+	function registerLoginSuccess(input) {
+		console.info("Function Login Successful. Server Response:");
+		var data = JSON.parse(input);
+		console.log(data);
+		if (data["auth"]) {
+			window.location.href = "{% url 'user_interface' %}";
+		} else {
+			$("#registerForm .alert span").empty().append(data["msg"]).parent().slideDown();
+		}
+	}
+
+	function login() {
+		var formdata = new FormData();
+		$("nav .alert").slideUp();
+		formdata.append("user", $.trim($("#loginForm #user").val()));
+		formdata.append("pwd",  $.trim($("#loginForm #pwd").val()));
+		djangoPOST("{% url 'login_process' %}", formdata, actualLoginSuccess);
+	}
+
+	function actualLoginSuccess(input) {
+		var data = JSON.parse(input);
+		if (data["auth"]) {
+			navigate("{% url 'user_interface' %}");
+		} else {
+			$("nav .alert span").empty().append(data["msg"]).parent().slideDown();
+		}
+	}
+	</script>
+</body>
+</html>
+{% endblock %}

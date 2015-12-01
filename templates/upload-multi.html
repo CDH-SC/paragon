@@ -1,0 +1,112 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+{% csrf_token %}
+<header>
+  <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+</header>
+
+<nav>
+  <div class="upload-nav pull-left">
+    <a href="{% url 'user_interface' %}">View Collations</a>
+    <a href="{% url 'new_interface' %}">Select Collation Type</a>
+    <span class="current-step">Upload</span>
+  </div>
+
+  {% include "userdropdown.html" %}
+</nav>
+
+<div class="container">
+
+  <div class="col-xs-6 upload-content">
+
+    <ul class="col-xs-6 list-inline center-block upload-buttons">
+      <li>
+        <button type="button" class="btn btn-upload btn-browse" data-toggle="tooltip">
+          <i class="fa fa-file"></i>Browse
+        </button>
+      </li>
+      <li>
+        <button type="button" class="btn btn-upload disabled">
+          <i class="fa fa-remove"></i>Remove
+        </button>
+      </li>
+      <li class="hide">
+        <input type="file" class="hide" name="template" id="template" accept="image/*">
+      </li>
+    </ul>
+
+    <form class="drop">
+      <img id="template-dropzone" class="dropzone-img img-responsive" {% if exists %} src="{% url 'image' template_id %}" {% endif %}></img>
+    </form>
+
+  </div>
+
+  <div class="alert alert-info alert-dismissable upload-alert" style="display:none;">
+    <button type="button" class="close">x</button>
+    <span></span>
+  </div>
+
+  <div class="col-xs-6 upload-content">
+
+    <ul class="list-inline upload-buttons col-xs-6 center-block">
+      <li>
+        <button type="button" class="btn btn-upload btn-browse disabled" data-toggle="tooltip" data-placement="bottom" data-original-title="Upload Multiple Files at One Time. Note: This will override any previously submitted files through this button.">
+          <i class="fa fa-file"></i>Browse
+        </button>
+      </li>
+      <li>
+        <button type="button" class="btn btn-upload disabled" data-toggle="modal" data-target="#deleteModal">
+          <i class="fa fa-remove"></i>Remove
+        </button>
+      </li>
+      <li class="hide">
+        <input type="file" name="rightMultiple" id="target" accept="image/*" multiple>
+      </li>
+    </ul>
+
+    <form>
+      <ul class="upload-multiple">
+        <li>
+          <button type="button" class="btn btn-delete"><i class="fa fa-trash-o"></i></button>
+          <button type="button" class="btn btn-store"><i class="fa fa-archive"></i></button>
+          <i class="fa fa-plus"></i>
+          <input type="file" name="multi1" accept="image/*" style="display:none;">
+          <img class="img-responsive">
+        </li>
+      </ul>
+    </form>
+
+  </div>
+
+  <div class="next-upload">
+    <span class="arrow-right" onclick="javascript:submitMulti()">Collate</span>
+  </div>
+
+</div>
+
+<div class="modal fade" id="deleteModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header clearfix">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Your current items</h4>
+      </div>
+      <div class="modal-body clearfix">
+        <div class="col-sm-12">
+          <h5>Multiple Side</h5>
+        </div>
+      </div>
+      <div class="modal-footer clearfix">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger disabled">Delete (<span>0</span>) Selected</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}
+
+</body>
+</html>
+{% endblock %}

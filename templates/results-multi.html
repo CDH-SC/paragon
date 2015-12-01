@@ -1,0 +1,183 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+{% csrf_token %}
+
+<body class="tk-proxima-nova">
+  <header>
+    <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+
+    <!-- <div class="user-nav">
+      <ul class="list-inline">
+        <li>
+          <a href="{% url 'user_interface' %}">
+            <i class="fa fa-user"></i>{{username}}
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'logout_process' %}">
+            <i class="fa fa-sign-out"></i>Logout
+          </a>
+        </li>
+      </ul>
+    </div> -->
+  </header>
+
+  <nav>
+    <div class="upload-nav pull-left">
+      <a href="{% url 'user_interface' %}">View Collations</a>
+      <span class="current-step">{{name}}</span>
+      <!-- <a href="{% url 'new_interface' %}">Select Collation</a> -->
+      <!-- <span class="current-step">Upload</span> -->
+      <!-- <span>Collate</span> -->
+    </div>
+
+    {% include "userdropdown.html" %}
+  </nav>
+
+  <!-- <nav class="upload-nav"> -->
+    <!-- <a href="{% url 'user_interface' %}">My Collations</a> -->
+    <!-- <span class="current-step">{{name}}</span> -->
+    <!-- <ul>
+    <li><center>{{name}}</center></li>
+    </ul> -->
+  <!-- </nav> -->
+
+  <div class="container">
+
+    <div class="col-xs-6 upload-content">
+      <div class="drop">
+         <img id="template-dropzone" class="dropzone-img" src="{% url 'image' template_id %}"></img>
+      </div>
+    </div>
+
+    <div class="col-xs-6 upload-content">
+      <form>
+        <ul class="upload-multiple">
+          {% for target in targets %}
+            <li style="cursor:pointer;">
+              <img onclick="javascript:navigate('{% url 'results_pair' target.pair_id %}?from_multi={{multi_id}}');" src="{% url 'image' target.image_id %}">
+            </li>
+          {% endfor %}
+        </ul>
+      </form>
+    </div>
+
+  </div>
+
+{% include "footer.html" %}
+
+  <script>
+
+function on_collate_success(){
+  navigate("{% url 'home' %}");
+}
+
+function onSubmitCollate(id){
+  var formdata = new FormData();
+  var path = "/paragon/collate-multi/process/" + id;
+  djangoPOST(path , formdata, on_collate_success, call_backend_error);
+  setTimeout(on_collate_success, 1000);
+}
+
+function on_upload_success(data){
+  var multi = JSON.parse(data);
+  onSubmitCollate(multi.id);
+}
+
+function onSubmitMulti(){
+  var formdata = new FormData();
+  if($("input[type='file']")[0].files.length > 0 && $("input[type='file']")[1].files.length > 0){
+    $("input[type='file']").each(function(){
+      for(var i = 0; i < $(this).get(0).files.length; ++i){
+        formdata.append($(this).attr('id'), $(this).get(0).files[i]);
+      }
+    });
+    djangoPOST("{% url 'upload_multi_process' %}", formdata, on_upload_success, call_backend_error);
+  }else{
+    alert("Please select an image to upload for both template and target.");
+  }
+}
+
+function onSubmitImage(query, type){
+  var formdata = new FormData();
+  formdata.append("type", type);
+  formdata.append("img", $(query).get(0).files[0]);
+  djangoPOST("{% url 'upload_image_process' %}", formdata, on_upload_image_success, call_backend_error);
+}
+
+function on_upload_image_success(data){
+  var jsonData = JSON.parse(data);
+  var date = new Date();
+  var path = "/paragon/temp-image/" + '{{username}}?' + date.getTime();
+  if(jsonData.type == "template"){
+    var query = "#" + jsonData.type + "-dropzone";
+    $(query).attr('src', path);
+  }else{
+    $('.holder-bolder > li > img:not([src])').attr('src', path);
+  }
+}
+
+function on_remove_image(){
+  $(this).parent().remove();
+}
+
+function on_input_changed(){
+  var date = new Date();
+  $(".multi-remove").show();
+  $(this).parent().clone().appendTo('.holder-bolder');
+  $(this).attr('id', date.getTime());
+  $(this).parent().append("<img></img>");
+  onSubmitImage($(this), "target");
+  $(this).parent().find("> i").remove();
+  $(this).parent().find("> input").hide();
+  $(".holder-bolder input").on("change", on_input_changed);
+  $(".holder-bolder > li:last-child > button").hide();
+  $(".multi-remove").on("click", on_remove_image);
+}
+
+function on_template_changed(){
+  onSubmitImage($(this), "template");
+}
+
+$(".holder-bolder input").on("change", on_input_changed);
+$("#template").on("change", on_template_changed);
+
+$(".multi-remove").on("click", on_remove_image);
+
+$('#ready-template-dropzone').hide();
+$('.multi-remove').hide();
+
+ $('#template').on('change', function(){
+    $('#ready-template-dropzone').fadeIn();
+    $('#btn-upload-template').focus();
+  });
+  </script>
+</body>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

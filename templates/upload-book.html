@@ -1,0 +1,173 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<header>
+  <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+</header>
+
+<nav>
+  <div class="upload-nav pull-left">
+    <a href="{% url 'user_interface' %}">View Collations</a>
+    <a href="{% url 'new_interface' %}">Select Collation Type</a>
+    <span class="current-step">Upload</span>
+  </div>
+
+  {% include "userdropdown.html" %}
+</nav>
+
+<div class="container">
+
+  <div class="col-xs-6 upload-content">
+
+    <ul class="list-inline upload-buttons col-xs-6 center-block">
+      <li>
+        <button type="button" class="btn btn-upload btn-browse" data-toggle="tooltip" data-placement="bottom" data-original-title="Upload Multiple Files at One Time">
+          <i class="fa fa-file"></i>Browse
+        </button>
+      </li>
+      <li>
+        <button type="button" class="btn btn-upload disabled" data-toggle="modal" data-target="#deleteModal">
+          <i class="fa fa-remove"></i>Remove
+        </button>
+      </li>
+      <li class="hide">
+        <input type="file" name="leftMultiple" id="template" accept="application/octet-stream, application/zip, .pdf" multiple>
+      </li>
+    </ul>
+
+    <form>
+      <div class="overlay">
+        <div class="loader-book-collation">Loading...</div>
+      </div>
+
+      <ul class="upload-multiple" id="template-holder">
+        <li>
+          <button type="button" class="btn btn-delete"><i class="fa fa-trash-o"></i></button>
+          <button type="button" class="btn btn-store"><i class="fa fa-archive"></i></button>
+          <span>1</span>
+          <input name="leftBook1" type="file">
+        </li>
+      </ul>
+    </form>
+
+    <div class="col-xs-12">
+      <div class="upload-holder" >
+        <ul class="list-inline"></ul>
+
+        <div class="spacer-holder">
+          <li class="spacer">
+            <span>Add a blank spacer.</span>
+            <button type="button" class="btn btn-delete"><i class="fa fa-trash-o"></i></button>
+            <input type="text" class="hide" name="ignore" disabled>
+          </li>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="alert alert-info alert-dismissable upload-alert" style="display:none;">
+    <button type="button" class="close">x</button>
+    <span></span>
+  </div>
+
+  <div class="col-xs-6 upload-content">
+
+    <ul class="list-inline upload-buttons col-xs-6 center-block">
+      <li>
+        <button type="button" class="btn btn-upload btn-browse disabled" data-toggle="tooltip" data-placement="bottom" data-original-title="Upload Multiple Files at One Time">
+          <i class="fa fa-file"></i>Browse
+        </button>
+      </li>
+      <li>
+        <button type="button" class="btn btn-upload disabled" data-toggle="modal" data-target="#deleteModal">
+          <i class="fa fa-remove"></i>Remove
+        </button>
+      </li>
+      <li class="hide">
+        <input type="file" name="rightMultiple" id="target" accept="application/octet-stream, application/zip, .pdf" multiple>
+      </li>
+    </ul>
+
+    <form>
+      <div class="overlay">
+        <div class="loader-book-collation">Loading...</div>
+      </div>
+
+      <ul class="upload-multiple" id="target-holder">
+        <li>
+          <button type="button" class="btn btn-delete"><i class="fa fa-trash-o"></i></button>
+          <button type="button" class="btn btn-store"><i class="fa fa-archive"></i></button>
+          <span>1</span>
+          <input name="rightBook1" type="file">
+        </li>
+      </ul>
+    </form>
+
+    <div class="col-xs-12">
+      <div class="upload-holder">
+        <ul class="list-inline"  ></ul>
+
+        <div class="spacer-holder">
+          <li class="spacer">
+            <span>Add a blank spacer.</span>
+            <button type="button" class="btn btn-delete"><i class="fa fa-trash-o"></i></button>
+            <input type="text" class="hide" name="ignore" disabled>
+          </li>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="next-upload">
+    <span onclick="javascript:submitBook()" class="arrow-right">Collate</span>
+  </div>
+
+</div>
+
+<div class="modal fade" id="deleteModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header clearfix">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Your current items</h4>
+      </div>
+      <div class="modal-body clearfix">
+        <div class="col-sm-5">
+          <h5>Left Book</h5>
+
+          <div class="checkbox selecter">
+            <label>
+              <input type="checkbox" id="leftSelecter">
+              Select All
+            </label>
+          </div>
+        </div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-5">
+          <h5>Right Book</h5>
+
+          <div class="checkbox selecter">
+            <label>
+              <input type="checkbox" id="rightSelecter">
+              Select All
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer clearfix">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger disabled">Delete (<span>0</span>) Selected</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}
+
+</body>
+</html>
+{% endblock %}
