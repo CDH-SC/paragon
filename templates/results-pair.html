@@ -1,0 +1,174 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<body class="tk-proxima-nova">
+  <header>
+    <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+  </header>
+
+  <nav>
+    <div class="upload-nav pull-left">
+      <a href="{% url 'user_interface' %}">View Collations</a>
+      <span class="current-step">Results</span>
+    </div>
+
+    <button type="button" class="btn btn-primary" style="position:absolute;left:0;right:0;margin-left:auto;margin-right:auto;width:100px;">Reset Zoom</button>
+
+   {% include "userdropdown.html" %}
+  </nav>
+
+  <div class="container">
+
+    <div class="col-xs-4 upload-content">
+      <div class="zoomViewport">
+        <div class="zoomContainer">
+          <img id="template-dropzone" class="dropzone-img img-responsive zoomTarget" src="{% url 'image' template_id %}">
+          <p>{{template_name}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-4 upload-content">
+      <div class="zoomViewport">
+        <div class="zoomContainer">
+          <img id="target-dropzone" class="dropzone-img img-responsive" src="{% url 'image' target_id %}">
+          <p>{{ target_name }}</p>
+          <div class="response-alert text-muted text-center">Depending on your image resolution,<br />this may be too blurry to comprehend.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-4 upload-content">
+      <img id="result-dropzone" class="dropzone-img img-responsive" src="{% url 'result_image' username pair_id %}">
+      <!-- <div class="canvas-container"></div> -->
+    </div>
+
+  </div>
+
+  {% include "footer.html" %}
+  <script src="{% static 'js/zoomooz.min.js' %}"></script>
+  <script>
+  $(window).load(function () {
+    // Manually assign the height of each upload container.
+    $(".upload-content").each(function () {
+      // $(this).css("height", $(this).find("img").height());
+      console.log("Image Width:  " + $(this).find("img").width());
+      console.log("Image Height: " + $(this).find("img").height());
+    });
+
+    /// Draw canvas.
+    // Determine how fast the algorithm took.
+    var start = new Date().getMilliseconds();
+
+    // Grab the result.
+    var coordinates = "{{result}}";
+    if (coordinates.toLowerCase() == "failed") {
+      $("img#result-dropzone").parent().append("<div class='progress progress-striped results-error'><div class='progress-bar progress-bar-danger'><p style='top: 50% !important;'>Failure is usually due to our algorithm's inability to determine enough match points for your image pair. This is commonly caused by inter-edition comparisons rather than intra-edition comparisons. Please ensure that your images are from the same edition.</p></div></div>");
+      return false;
+    }
+    var result = coordinates === "" ? [] : JSON.parse(coordinates);
+
+    // Cache for faster access.
+    var resultImage  = $("img#result-dropzone");
+    var resultColumn = $("img#result-dropzone").parent();
+    var widthRatio   = resultImage.width()  / resultImage[0].naturalWidth;
+    var heightRatio  = resultImage.height() / resultImage[0].naturalHeight;
+
+    // Loop through the JSON array.
+    for (var i = 0; i < result.length; i++) {
+      // Create new variables.
+      var canvasLeft = canvasTop = canvasWidth = canvasHeight = 0;
+
+      // Loop through the JSON array's array. ... Inception.
+      for (var j = 0; j < result[i].length; j++) {
+        // Originally, I tried doing all four variables at one time, however,
+        // this took on average 3 milliseconds faster to complete. I'm not going to complain.
+        switch (j) {
+          case 0:
+            canvasLeft = parseInt(result[i][j], 10);
+            break;
+          case 1:
+            canvasTop = parseInt(result[i][j], 10);
+            break;
+          case 2:
+            canvasWidth = parseInt(result[i][j], 10) - canvasLeft;
+            break;
+          case 3:
+            canvasHeight = parseInt(result[i][j], 10) - canvasTop;
+            break;
+          default:
+            break;
+        }
+      }
+
+      // In the pre-determined column that has the result image, create a new canvas tag. Find the new canvas tag you just made
+      // do some math, alongside finding the column's respective padding pixels, and out comes a new canvas.
+      resultColumn.append("<canvas>").find("canvas").last().css({
+        top:    (canvasTop * heightRatio) + parseInt(resultColumn.css("padding-top"), 10),
+        left:   (canvasLeft * widthRatio) + parseInt(resultColumn.css("padding-left"), 10) + parseInt(resultColumn.find("img").css("margin-left"), 10),
+        width:  canvasWidth * widthRatio,
+        height: canvasHeight * heightRatio
+      });
+    }
+    console.info("Canvas drawing took " + (new Date().getMilliseconds() - start) + " milliseconds.");
+  });
+
+  $(document).ready(function () {
+    // This allows the user to click and drag the image.
+    $("img#template-dropzone, img#target-dropzone").draggable();
+  });
+
+  // TODO: Drag canvas as image is being drug.
+
+  $(".upload-content").on("click", "canvas", function (evt) {
+    var template = $("#template-dropzone").parent();
+    var target   = $("#target-dropzone").parent();
+    var html     = $(this)[0].outerHTML;
+
+    // Define the settings for the zoom.
+    var settings = {
+      targetsize: 0.33,
+      duration: 450
+    };
+
+    // Remove any previous canvas.
+    template.find("canvas").remove();
+    target.find("canvas").remove();
+
+    // Append the canvas HTML and assign the zoomTarget.
+    template.append(html).find("canvas").zoomTarget(settings);
+    target.append(html).find("canvas").zoomTarget(settings);
+
+    // Click the template.
+    template.find("canvas").click();
+
+    // Wait 400 seconds, then click the next one.
+    // We wait 400 seconds due to the library not being able to animate both
+    // clicks at the same time.
+    setTimeout(function () {
+      target.find("canvas").click();
+    }, 400);
+
+    evt.stopPropagation();
+  });
+
+  // Used for testing. This will return the two left images back to their original size.
+  $("button.btn-primary").click(reset);
+  function reset() {
+    $(".zoomContainer").first().click().find("canvas").remove();
+
+    setTimeout(function () {
+      $(".zoomContainer").last().click().find("canvas").remove();
+
+      $("#template-dropzone, #target-dropzone").css({
+        left   : "0px",
+        right  : "0px",
+        width  : "100%",
+        height : "100%"
+      });
+    }, 400);
+  }
+  </script>
+</body>
+</html>
+{% endblock %}

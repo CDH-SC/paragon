@@ -1,0 +1,211 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<header>
+  <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+</header>
+
+<nav>
+  <div class="upload-nav pull-left">
+    <span class="current-step">View Collations</span>
+    <a href="{% url 'new_interface' %}">Select Collation Type</a>
+  </div>
+
+  {% include "userdropdown.html" %}
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+
+      <div class="col-xs-4">
+        <h3>Single Collation Results</h3>
+        <ul class="list-files">
+          {% for single in single_collations %}
+          <li>
+            <button type="button" class="btn btn-danger" onclick="javascript:deletePair({{single.pair.pair_id}})">x</button>
+            <h4 onclick="javascript:navigate('{% url 'results_pair' single.pair.pair_id %}')">{{single.name}}</h4>
+            <span>({{single.contents}})</span>
+            {% if single.pair.image_transformed == None or single.pair.image_transformed.path == single.pair.image_template.path %}
+            <div class="progress progress-striped active">
+              <div class="progress-bar" pid="{{single.pair.pair_id}}" type="s" style="width:100%">
+                Collating...
+              </div>
+            </div>
+            {% endif %}
+          </li>
+          {% endfor %}
+          <li>
+            <h4 onclick="javascript:navigate('{% url 'upload_pair_interface' %}')">New Single Collation</h4>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-xs-4">
+        <h3>Multi-Collation Results</h3>
+        <ul class="list-files">
+          {% for multi in multi_collations %}
+          <li class="has-pair">
+            <button type="button" class="btn btn-danger" onclick="javascript:deleteMulti({{multi.multi_id}})">x</button>
+            <h4>{{multi.name}}</h4>
+            {% if multi.multi.progress != 100 %}
+            <div class="progress progress-striped active">
+              <div class="progress-bar" pid="{{multi.multi_id}}" type="m" style="width:{{multi.multi.progress}}%;">
+                {{multi.multi.progress}}% complete
+              </div>
+            </div>
+            {% endif %}
+            <ul class="list-files-pair">
+              {% for content in multi.contents %}
+              <li onclick="javascript:navigate('{% url 'results_pair' content.id %}?from_multi={{multi.multi_id}}');" src="">{{content.id}}. Images: {{content.text}}</li>
+              {% endfor %}
+            </ul>
+          </li>
+          {% endfor %}
+          <li>
+            <h4 onclick="javascript:navigate('{% url 'upload_multi_interface' %}')">New Multi-Collation</h4>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-xs-4">
+        <h3>Book Collation Results</h3>
+        <ul class="list-files">
+          {% for book in book_collations %}
+          <li class="has-pair">
+            <button type="button" class="btn btn-danger" onclick="javascript:deleteBook({{book.book_id}})">x</button>
+            <h4>{{book.name}}</h4>
+            {% if book.book.progress != 100 %}
+            <div class="progress progress-striped active">
+              <div class="progress-bar" pid="{{book.book_id}}" type="b" style="width:{{book.book.progress}}%">
+                {{book.book.progress}}% complete
+              </div>
+            </div>
+            {% endif %}
+            <ul class="list-files-pair">
+              {% for content in book.contents %}
+              <li onclick="javascript:navigate('{% url 'results_pair' content.id %}?from_multi={{multi.multi_id}}');" src="">{{content.id}}. Images: {{content.text}}</li>
+              {% endfor %}
+            </ul>
+          </li>
+          {% endfor %}
+          <li>
+            <h4 onclick="javascript:navigate('{% url 'upload_book_interface' %}')">New Book Collation</h4>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}
+
+<script>
+
+function updateProgress() {
+
+}
+
+/////////////
+//// Old ////
+/////////////
+
+var formdata = new FormData();
+var date = new Date();
+var redirectPath = '/paragon/user?' + date.getTime();
+var queryPath = "{% url 'to_date' count %}?" + date.getTime();
+var jsonData;
+
+function on_query_success(data){
+  if(data.msg != "True"){
+    navigate(redirectPath);
+  }
+}
+
+djangoGET(queryPath, formdata, on_query_success);
+
+function on_progress_success(data){
+  var type = data.type;
+  var pid = data.id;
+  // console.log(printTime() + "Progress Bar - Type: " + type + " - PID: " + pid + " - Progress: " + data.progress);
+  var query = $(".progress-bar[type='" + type + "'][pid=" + pid + "]");
+
+  if (data.progress < 0) {
+    query.text("Failed").css("width", "100%").addClass("progress-bar-danger").attr({
+      "type": "",
+      "data-toggle" : "tooltip",
+      "data-placement" : "top",
+      "title" : "Failure is usually due to our algorithm's inability to determine enough match points for your image pair.  This is commonly caused by inter-edition comparisons rather than intra-edition comparisons.  Please ensure that your images represent corresponding pages from different copies of the same edition."
+    });
+    $("[data-toggle='tooltip']").tooltip();
+    $(this).parentsUntil("li").parent().find("h4").attr("onclick", "");
+  } else if (data.progress == 100){
+    query.parent().fadeOut(function () {
+      $(this).remove();
+    });
+  } else {
+    if (type=='m') {
+      query.text(data.progress + "% complete");
+      query.css("width", data.progress + "%");
+    } else if (type == "b") {
+      query.text(data.progress + "% complete");
+      query.css("width", data.progress + "%");
+    }
+  }
+}
+
+function progressUpdate() {
+  var formdata = new FormData();
+  var path;
+
+  $(".progress-bar[type='s']").each(function(){
+    var date = new Date();
+    path = "/paragon/progress-single/" + $(this).attr('pid') + "?" + date.getTime();
+
+    djangoGET(path, formdata, on_progress_success);
+  });
+
+  $(".progress-bar[type='m']" ).each(function(){
+    var date = new Date();
+    path = "/paragon/progress-multi/" + $(this).attr('pid') + "?" + date.getTime();
+
+    djangoGET(path, formdata, on_progress_success);
+  });
+
+  $(".progress-bar[type='b']").each(function () {
+    path = "/paragon/progress-book/" + $(this).attr("pid") + "?" + new Date().getTime();
+    djangoGET(path, new FormData(), on_progress_success);
+  })
+  setTimeout(progressUpdate, 5000);
+}
+
+setTimeout(progressUpdate, 10);
+
+// This is successfully able to be removed once ready.
+// function on_delete_success(data){
+// 	jsonData = data;
+// 	if(jsonData.msg == "Success"){
+// 		window.location.reload();
+// 	}else{
+// 		alert(jsonData.msg);
+// 	}
+// }
+
+// function deletePair(id){
+// 	var formdata = new FormData();
+// 	var path = "/paragon/delete-pair/process/" + id;
+// 	requestGET(path, formdata, on_delete_success, call_backend_error);
+// }
+
+// function deleteMulti(id){
+// 	var formdata = new FormData();
+// 	// TODO: The Multi-Collation Delete Breaks Here:
+// 	var path = "/paragon/delete-multi/process/" + id;
+// 	requestGET(path, formdata, on_delete_success, call_backend_error);
+// }
+</script>
+
+</body>
+</html>
+{% endblock %}

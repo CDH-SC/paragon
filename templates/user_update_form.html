@@ -1,0 +1,12 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<form class="" action="" method="post">
+  {% csrf_token %}
+  <!--{% for field in form %}
+
+  {% endfor %} -->
+  {{ form.as_p }}
+  <input type="submit" name="name" value="Update">
+</form>
+{% endblock content %}

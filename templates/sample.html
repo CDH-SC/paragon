@@ -1,0 +1,53 @@
+{% load static %}
+{% include "base.html" %}
+{% block content %}
+<header>
+  <img src="{% static 'img/Paragon_logo_W.svg' %}" class="img-responsive" alt="Paragon Logo">
+</header>
+
+<nav>
+  <div class="upload-nav pull-left">
+    <a href="{% url 'user_interface' %}">View Collations</a>
+    <span class="current-step">Select Collation Type</span>
+    <span>Upload</span>
+  </div>
+
+  <div class="dropdown pull-right">
+    <button class="btn dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown" aria-expanded="true">
+      <i class="fa fa-user"></i>{{username}}
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="userMenu">
+      <li role="presentation">
+        <a role="menuitem" tabindex="-1" href="{% url 'user_interface' %}"><i class="fa fa-book"></i>View Collations</a>
+      </li>
+      <li role="presentation">
+        <a role="menuitem" tabindex="-1" href="#"><i class="fa fa-pencil"></i>Edit Profile</a>
+      </li>
+      <li role="presentation" class="divider"></li>
+      <li role="presentation">
+        <a role="menuitem" tabindex="-1" href="{% url 'logout_process' %}"><i class="fa fa-sign-out"></i>Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h2 class="text-center" style="position: relative; top: 70px;">Sample Data</h2>
+  <ul class="list-unstyled center-block col-sm-2" style="margin-top: 100px;">
+    <li style="margin-bottom: 10px;">
+      <a href="{% static 'files/sampleset.zip' %}" class="btn btn-info" style="min-width: 261px;">Download Complete Sample Set</a>
+    </li>
+    <li style="margin-bottom: 10px;">
+      <a href="{% static 'files/sampleMulti.zip' %}" class="btn btn-info" style="min-width: 261px;">Download Multi-Collation Sample Set</a>
+    </li>
+    <li style="margin-bottom: 10px;">
+      <a href="{% static 'files/sampleSingle.zip' %}" class="btn btn-info">Download Single Collation Sample Set</a>
+    </li>
+  </ul>
+</div>
+
+{% include "footer.html" %}
+</body>
+</html>
+{% endblock %}

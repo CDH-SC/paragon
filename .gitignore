@@ -1,6 +1,6 @@
 static/
 *.jpg
-venv/*
+venv/
 paragon/settings.py
 *.so.*
 *.so
@@ -8,8 +8,8 @@ dewarpmodule/OLD/
 dewarpmodule/src/src/
 dewarpmodule/src/prog/*.jpg
 dewarpmodule/src/Dewarp/*.jpg
-dewarpmodule/src/occropy-master/tests/
+dewarpmodule/src/ocropy-master/tests/
 modulepipe/*.jpg
-modulepipe/example/*
+modulepipe/example/
 
 
