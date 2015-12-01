@@ -1,14 +1,14 @@
-static/*
+static/
 *.jpg
 venv/*
 paragon/settings.py
 *.so.*
 *.so
-dewarpmodule/OLD/*
-dewarpmodule/src/src/*
+dewarpmodule/OLD/
+dewarpmodule/src/src/
 dewarpmodule/src/prog/*.jpg
 dewarpmodule/src/Dewarp/*.jpg
-dewarpmodule/src/occropy-master/tests/*
+dewarpmodule/src/occropy-master/tests/
 modulepipe/*.jpg
 modulepipe/example/*
 
