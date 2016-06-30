@@ -1,1 +1,0 @@
-celery -A paragon worker -P eventlet -c 1000 &
