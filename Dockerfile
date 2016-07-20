@@ -2,6 +2,7 @@
 FROM python:2.7
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+RUN apt-get update && apt-get install -y libopencv-dev python-opencv
 #
 COPY ./requirements2 requirements.txt
 RUN pip --no-cache-dir install -r requirements.txt
