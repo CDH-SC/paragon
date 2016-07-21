@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y libopencv-dev python-opencv
 #
 COPY ./requirements2 requirements.txt
 RUN pip --no-cache-dir install -r requirements.txt
+WORKDIR /usr/src/app/paragon
 #
 # #ADD repositories /etc/apk/repositories
 # RUN apk add --update py-pip \
