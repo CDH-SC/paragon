@@ -8,7 +8,7 @@ assert sys.version_info[0]==2 and sys.version_info[1]>=7,\
 from distutils.core import setup #, Extension, Command
 #from distutils.command.install_data import install_data
 
-if not os.path.exists("models/en-default.pyrnn.gz"):
+if not os.path.exists("/usr/src/app/paragon/preproc/models/en-default.pyrnn.gz"):
     print
     print "You must download the default model 'en-default.pyrnn.gz'"
     print "and put it into ./models."
@@ -25,7 +25,7 @@ setup(
     version = 'v0.2',
     author = "Thomas Breuel",
     description = "The OCRopy RNN-based Text Line Recognizer",
-    packages = ["ocrolib"],
-    data_files= [('share/ocropus', ["models/en-default.pyrnn.gz"])],
+    packages = ["/usr/src/app/paragon/preproc/ocrolib"],
+    data_files= [('share/ocropus', ["/usr/src/app/paragon/preproc/models/en-default.pyrnn.gz"])],
     scripts = scripts,
     )

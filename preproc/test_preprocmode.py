@@ -13,7 +13,7 @@
 
 import preprocmod
 
-preprocmod.pre_process('Y1C7v.jpeg')
+preprocmod.pre_process('/usr/src/app/paragon/preproc/Y1C7v.jpeg')
 
 
 

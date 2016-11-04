@@ -1,12 +1,25 @@
 # Dockerfile for Paragon
 FROM python:2.7
+USER root
 RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-RUN apt-get update && apt-get install -y libopencv-dev python-opencv
+RUN mkdir -p /usr/local/
+WORKDIR /usr/local/
+COPY ./install-opencv.sh /usr/local/
+#COPY ./opencv_contrib/ /usr/src/opencv_contrib/
+RUN sh /usr/local/install-opencv.sh
+#RUN apt-get update && apt-get install -y libopencv-dev python-opencv
 #
+WORKDIR /usr/src/app/
 COPY ./requirements2 requirements.txt
 RUN pip --no-cache-dir install -r requirements.txt
 WORKDIR /usr/src/app/paragon
+#COPY modulepipe modulepipe
+#RUN  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/
+
+#RUN python ./modulepipe/Setup_class.py build_ext --inplace
+#RUN python ./modulepipe/Setup_collate.py build_ext --inplace
+#RUN python ./modulepipe/Setup_patch.py build_ext --inplace
+#RUN python ./modulepipe/Setup_patchsing.py build_ext --inplace
 #
 # #ADD repositories /etc/apk/repositories
 # RUN apk add --update py-pip \

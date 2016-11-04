@@ -1,9 +1,9 @@
-#include "opencv/cv.h"
-#include "opencv/highgui.h"
 #include "opencv2/core/core.hpp"
 #include "opencv2/nonfree/features2d.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "cv.h"
+#include "highgui.h"
 #include "opencv2/legacy/legacy.hpp"
 
 #include <iostream>
@@ -53,7 +53,6 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
 	/** Updated: not resizing for displaying issues*/
     img1 = cvLoadImage(img1_file, CV_LOAD_IMAGE_COLOR);
     img2 = cvLoadImage(img2_file, CV_LOAD_IMAGE_COLOR);
-	
     // int ideal_height = 1000;
     // int height1, width1, height2, width2;
 
@@ -88,10 +87,7 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
         // img2 = cvCreateImage(cvSize(width2, height2), img2_init->depth, img2_init->nChannels);
         // cvResize(img2_init, img2);
     // }
-	
-	
-    Mat src(img1);
-    Mat dst(img2);
+
 
     /** Compute SIFT feature points */
     int feat_num;
@@ -114,12 +110,14 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
     }
     free(feat_img1);
     free(feat_img2);
-    printf("%d matches found\n", (int) feat1.size());
+//    printf("%d matches found\n", (int) feat1.size());
 
     /** Use RANSAC to filter false positives */
     Mat mask;
     Mat H = findHomography(feat1, feat2, CV_RANSAC, 5, mask);
 
+//    cout << "mask rows: " << mask.rows << endl;
+//    cout << "mask cols: " << mask.cols << endl;
 
     vector<int> inlier_idx;
     vector<Point2f> feat1_filtered, feat2_filtered;
@@ -133,7 +131,7 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
         }
     }
     feat_num = (int) feat1_filtered.size();
-    cout << "Inlier #: " << feat1_filtered.size() << endl;
+    cout << "inliers: " << feat1_filtered.size() << endl;
 
     int match_threshold = 100;
     if (feat_num > match_threshold)
@@ -143,16 +141,15 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
     else
     {
         printf("Different document...\n");
-		
-		Point pErr = Point(-1,-1);
-		feat_template_f.push_back(pErr);
-		feat_target_f.push_back(pErr);
-		
-		img_template_new = src.clone();
-		img_target_new   = dst.clone();
-		
         return 3;
     }
+
+
+
+    Mat src(img1);
+    Mat dst(img2);
+//    src = imread(img1_file, 1);
+//    dst = imread(img2_file, 1);
 
 
 //    plot_matches(src, dst, feat1_filtered, feat2_filtered);
@@ -209,6 +206,8 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
             feat2_filtered[i].y = feat2_filtered[i].y * scaleTri;
         }
     }
+//    cout << "src row: " << src.rows << " col: " << src.cols << endl;
+//    cout << "dst row: " << dst.rows << " col: " << dst.cols << endl;
 
     // plot_matches(src, dst, feat1_filtered, feat2_filtered);
 
@@ -384,7 +383,7 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
 
 
 	/// Select part of newly detected surf points, max_num = 1000
-	int max_num = 600;
+	int max_num = 500;
 	int init_feat_num;
     int idx;
     double idx_double = 0.0;
@@ -393,7 +392,7 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
 
 //	cout << "SURF detector feat size: " << keypoints.size() << endl;
 
-	/* if ((int) keypoints.size() > max_num)
+	if ((int) keypoints.size() > max_num)
 	{
         Point ptemp;
         init_feat_num = max_num;
@@ -419,78 +418,8 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
             ptemp.y = (int) (keypoints[i].pt.y + 0.5);
             keypoints_new.push_back(ptemp);
         }
-	} */
-	
-	/** Use Harris corner detector to detect more corner points*/
-	Mat src_gray;
-	Mat dst_harris, dst_norm, dst_norm_scaled;
-	cvtColor(src, src_gray, CV_RGB2GRAY);
-	
-	/// Detector parameters
-	int harris_thresh = 100;
-	int blockSize = 2;
-	int apertureSize = 3;
-	double k = 0.04;
-	
-	/// Detecting corners
-	dst_harris = Mat::zeros(src.size(), CV_32FC1);
-	cornerHarris(src_gray, dst_harris, blockSize, apertureSize, k, BORDER_DEFAULT);
-	
-	/// Normalizing
-	normalize(dst_harris, dst_norm, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
-	convertScaleAbs(dst_norm, dst_norm_scaled);
-	
-	vector<Point> keypoints_harris;
-	keypoints_harris.clear();
-	for (int j = 0; j < dst_norm.rows; j++)
-	{
-		for (int i = 0; i < dst_norm.cols; i++)
-		{
-			if ((int)dst_norm.at<float>(j, i) > harris_thresh)
-			{
-				//circle(dst_norm_scaled, Point(i, j), 2, Scalar(0), 2, 8, 0);
-				Point ptemp;
-				ptemp.x = i;
-				ptemp.y = j;
-				
-				keypoints_harris.push_back(ptemp);
-			}
-		}
 	}
-	
-	cout << "keypoints_harris # " << keypoints_harris.size() << endl;
 
-	/// Re-sample the keypoints to speed up the process
-	keypoints_new.clear();
-	if ((int) keypoints_harris.size() > max_num)
-	{
-        Point ptemp;
-        init_feat_num = max_num;
-        idx_step = ((double) keypoints_harris.size()) / ((double) max_num);
-
-        for(int i=0; i<init_feat_num; i++)
-        {
-            idx_double = ((double) i)*idx_step;;
-            idx = floor(idx_double);
-            ptemp.x = (int) (keypoints_harris[idx].x + 0.5);
-            ptemp.y = (int) (keypoints_harris[idx].y + 0.5);
-            keypoints_new.push_back(ptemp);
-        }
-	}
-	else
-	{
-        Point ptemp;
-        init_feat_num = (int) keypoints_harris.size();
-
-        for (int i=0; i<init_feat_num; i++)
-        {
-            ptemp.x = (int) (keypoints_harris[i].x + 0.5);
-            ptemp.y = (int) (keypoints_harris[i].y + 0.5);
-            keypoints_new.push_back(ptemp);
-        }
-	}
-	
-	
     /** Compute vec = feat2_filtered - feat1_filtered; */
     vector<Point> sift_feat_vec;
     for (int i=0; i<(int) feat1_filtered.size(); i++)
@@ -508,7 +437,7 @@ int patch_match (char img1_file[512], char img2_file[512], vector<Point> &feat_t
     /// Use nearest neighbor to locate corresponding target feat point
     vector<Point> init_feat_template, init_feat_target;
 
-    for (int i=0; i<(int) keypoints_new.size(); i++)
+    for (int i=0; i<init_feat_num; i++)
     {
         Point p1temp, p2temp;
         p1temp = keypoints_new[i];
