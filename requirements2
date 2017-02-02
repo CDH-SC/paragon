@@ -24,3 +24,4 @@ six==1.9.0
 wheel==0.24.0
 numexpr==2.4.3
 matplotlib==1.4.3
+ghostscript
