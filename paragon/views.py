@@ -99,7 +99,7 @@ def update_email_process(request):
 def update_password_process(request):
     response = {}
     old_password = request.POST['old']
-    new_password_conf = request.POST['new1'] 
+    new_password_conf = request.POST['new1']
     new_password = request.POST['new2']
     if new_password == new_password_conf:
         response = {'status' : 'Success'}
@@ -112,7 +112,7 @@ def update_password_process(request):
 
 def tmp_book_contents(request, username, id):
     response = {'username':username, 'book_id':id}
-    pages_path = "/var/www/html/paragon/static/media/paragon/" + username + "/tmp_book/book" + id + "/"
+    pages_path = "/usr/src/app/paragon/static/media/paragon/" + username + "/tmp_book/book" + id + "/"
     response['book_path'] = pages_path
     import os
     files = os.listdir(pages_path)
@@ -141,8 +141,8 @@ def register_process(request):
     except IntegrityError:
         response['success'] = False
         response['msg'] = "Username already exists."
-    send_mail('Paragon Registration', 'Welcome to Paragon!\nVisit us at: http://tundra.csd.sc.edu/paragon', 'admin@tundra.csd.sc.edu',
-    [email])
+    #send_mail('Paragon Registration', 'Welcome to Paragon!\nVisit us at: http://tundra.csd.sc.edu/paragon', 'admin@tundra.csd.sc.edu',
+    #[email])
     response = json.dumps(response)
     return HttpResponse(response, content_type='application/json')
 
@@ -232,13 +232,13 @@ def upload_book_process(request):
     response = {'msg':'success'}
     uname = request.user.username
     template_list = json.loads(request.POST['template_list'])
-    template_path = '/var/www/html/paragon/static/media/paragon/%s/tmp_book/template/' % (uname)
+    template_path = '/usr/src/app/paragon/static/media/paragon/%s/tmp_book/template/' % (uname)
     target_list = json.loads(request.POST['target_list'])
-    target_path = '/var/www/html/paragon/static/media/paragon/%s/tmp_book/target/' % (uname)
+    target_path = '/usr/src/app/paragon/static/media/paragon/%s/tmp_book/target/' % (uname)
     collation_book = CollationBook(progress=0)
     collation_book.save()
     book_id = collation_book.book_id
-    new_path = '/var/www/html/paragon/static/media/paragon/%s/book_%d/' % (uname, book_id)
+    new_path = '/usr/src/app/paragon/static/media/paragon/%s/book_%d/' % (uname, book_id)
     try:
         os.mkdir(new_path)
     except OSError:
@@ -285,9 +285,9 @@ def upload_book_temp_process(request):
     response['type'] = upload_type
     book_id = 0
     username = request.user.username
-    tmp_path = '/var/www/html/paragon/static/media/paragon/' + username + '/tmp'
-    tmp_book_path = '/var/www/html/paragon/static/media/paragon/' + username + '/tmp_book/'
-    pages_path = "/var/www/html/paragon/static/media/paragon/" + username + "/tmp_book/" + upload_type + "/"
+    tmp_path = '/usr/src/app/paragon/static/media/paragon/' + username + '/tmp'
+    tmp_book_path = '/usr/src/app/paragon/static/media/paragon/' + username + '/tmp_book/'
+    pages_path = "/usr/src/app/paragon/static/media/paragon/" + username + "/tmp_book/" + upload_type + "/"
     bookContent = ""
     extension = ""
     upload_file = File(request.FILES['book'])
@@ -331,7 +331,7 @@ def upload_image_process(request):
     response = {}
     response['type'] = request.POST['type']
     username = request.user.username
-    image_path = "/var/www/html/paragon/static/media/paragon/" + username + "/temp.jpg"
+    image_path = "/usr/src/app/paragon/static/media/paragon/" + username + "/temp.jpg"
     image_content = ""
     image = request.FILES['img']
     for chunk in image.chunks():
@@ -386,7 +386,7 @@ def delete_multi_process(request, id):
                     print "object does not exist"
         else:
             username = request.user.username
-            multiPath = "/var/www/html/paragon/static/media/paragon/" + username + "/multi_" + str(collation_multi.multi_id) + "/"
+            multiPath = "/usr/src/app/paragon/static/media/paragon/" + username + "/multi_" + str(collation_multi.multi_id) + "/"
         import shutil
         shutil.rmtree(multiPath)
         collation_multi.delete()
@@ -415,7 +415,7 @@ def delete_book_process(request, id):
                 hasPair.pair.delete()
         else:
             uname = request.user.username
-            bookPath = '/var/www/html/paragon/static/media/paragon/%s/tmp_book/' % (uname)
+            bookPath = '/usr/src/app/paragon/static/media/paragon/%s/tmp_book/' % (uname)
         import shutil
         shutil.rmtree(bookPath)
         collation_book.delete()
@@ -426,13 +426,14 @@ def delete_book_process(request, id):
 
 @login_required
 def upload_pair_process(request):
+    print "In upload pair process."
     username = request.user.username
     collation_pair = CollationPair()
     collation_pair.save()
     pair_id = collation_pair.pair_id
     response = {'pair_id': pair_id, 'preproc': 1}
-    template_path = "/var/www/html/paragon/static/media/paragon/" + username + "/" + "single_" + str(pair_id) + "/template.jpg"
-    target_path = "/var/www/html/paragon/static/media/paragon/" + username + "/" + "single_" + str(pair_id) + "/target.jpg"
+    template_path = "/usr/src/app/paragon/static/media/paragon/" + username + "/" + "single_" + str(pair_id) + "/template.jpg"
+    target_path = "/usr/src/app/paragon/static/media/paragon/" + username + "/" + "single_" + str(pair_id) + "/target.jpg"
     template = request.FILES['template']
     target = request.FILES['target']
     template_name = template.name
@@ -452,16 +453,27 @@ def upload_pair_process(request):
     image_template.save()
     image_target.save()
     ### PREPROC
-    if preprocmod.can_process(template_path) == -1:
-        response['preproc'] = 0
-    if preprocmod.can_process(target_path) == -1:
-        response['preproc'] = 0
-    if response['preproc'] == 1:
-        apply_preproc(image_template)
-        apply_preproc(image_target)
+    preproc = int(request.POST['preproc'])
+    print "PREPROC +_+_+_+_+__++_+_: " + str(preproc) + " " + str(preproc == 1)
+    if int(preproc) == 1:
+        if preprocmod.can_process(template_path) == -1:
+            print("CANT PREPROC TEMP")
+            response['preproc'] = 0
+        if preprocmod.can_process(target_path) == -1:
+            print("CANT PREPROC TARG")
+            response['preproc'] = 0
+        if response['preproc'] == 1:
+            print("APPLYING PREPROC!!")
+            apply_preproc(image_template)
+            apply_preproc(image_target)
+    else:
+        response['preproc'] = 2
     ### END PREPROC
-    apply_dewarp(image_template)
-    apply_dewarp(image_target)
+    dewarp = int(request.POST['dewarp'])
+    print "DEWARP+_+_+_+_+_+_: " + str(request.POST['dewarp'])
+    if int(dewarp) == 1:
+        apply_dewarp(image_template)
+        apply_dewarp(image_target)
     name = "Single Collation " + str(len(UserHasPair.objects.filter(user=request.user))+1)
     collation_pair = CollationPair.objects.get(pair_id=pair_id)
     collation_pair.image_template = image_template
@@ -478,7 +490,7 @@ def upload_multi_process(request):
     collation_multi.save()
     multi_id = collation_multi.multi_id
     username = request.user.username
-    dir_path = "/var/www/html/paragon/static/media/paragon/" + username + "/multi_" + str(multi_id) + "/"
+    dir_path = "/usr/src/app/paragon/static/media/paragon/" + username + "/multi_" + str(multi_id) + "/"
     file_contents = {}
     template = None
     targetList = request.FILES.keys()
@@ -626,7 +638,7 @@ def results_pair_multi(request, id, pair):
     return results_pair(request, pair)
 
 def temp_image(request, username):
-    image_path = "/var/www/html/paragon/static/media/paragon/" + username + "/temp.jpg"
+    image_path = "/usr/src/app/paragon/static/media/paragon/" + username + "/temp.jpg"
     try:
         f = open(image_path, "rb")
         content = f.read()
@@ -661,7 +673,7 @@ def image(request, id):
         return HttpResponse("Image does not exist")
 
 def tmp_book_image(request, username, type, file):
-    path = "/var/www/html/paragon/static/media/paragon/" + username + "/tmp_book/" + type + "/" + file
+    path = "/usr/src/app/paragon/static/media/paragon/" + username + "/tmp_book/" + type + "/" + file
     try:
         f = open(path, "rb")
         return HttpResponse(f.read(), content_type="image/jpeg")

@@ -1,6 +1,7 @@
 # Dockerfile for Paragon
 FROM python:2.7
 USER root
+RUN apt-get update && apt-get install -y sudo
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /usr/local/
 WORKDIR /usr/local/
@@ -16,6 +17,9 @@ WORKDIR /usr/src/app/paragon
 #COPY modulepipe modulepipe
 #RUN  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/
 
+COPY ./celery/conf/celeryd /etc/init.d/celeryd
+COPY ./celery/default/celeryd /etc/default/celeryd
+RUN adduser celery --ingroup sudo
 #RUN python ./modulepipe/Setup_class.py build_ext --inplace
 #RUN python ./modulepipe/Setup_collate.py build_ext --inplace
 #RUN python ./modulepipe/Setup_patch.py build_ext --inplace

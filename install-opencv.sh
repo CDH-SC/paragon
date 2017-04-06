@@ -107,6 +107,9 @@ cd ghostscript-8.71
 make XCFLAGS=-DHAVE_SYS_TIME_H=1
 make install
 
+
+apt-get -y update
+apt-get install  -y rabbitmq-server
 # Class build
 # python /usr/src/app/paragon/modulepipe/Setup_class.py build_ext --inplace
 # rm -rf /usr/src/app/paragon/modulepipe/build

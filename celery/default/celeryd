@@ -1,0 +1,4 @@
+CELERYD_NODES="worker1"
+CELERY_APP="paragon"
+CELERYD_CHDIR="/usr/src/app/paragon/"
+CELERYD_OPTS="-P eventlet -c 1000 --detach --without-heartbeat"

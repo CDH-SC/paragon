@@ -4,7 +4,7 @@ import PIL
 from PIL import Image
 lib_path = os.path.abspath(settings.PROJECT_ROOT)
 sys.path.append(lib_path)
-sys.path.append('/var/www/html/paragon/')
+sys.path.append('/usr/src/app/paragon/')
 sys.path.append('/usr/local/lib')
 import patchsingmod
 import classmod

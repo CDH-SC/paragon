@@ -19,6 +19,12 @@ modulepipe/*.jpg
 modulepipe/example/
 modulepipe/Y1C7v/
 
+./static/files/
+./static/files/*
+./static/media/
+./static/media/*
+./static/media/paragon/
+./static/media/paragon/*
 template/
 
 

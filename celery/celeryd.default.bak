@@ -1,0 +1,4 @@
+CELERYD_NODES="worker1"
+CELERY_APP="paragon"
+CELERYD_CHDIR="/var/www/html/paragon"
+CELERYD_OPTS="-P eventlet -c 1000 --without-heartbeat"

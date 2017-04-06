@@ -8,8 +8,8 @@ from django.conf import settings
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'paragon.settings')
-
-app = Celery('paragon', broker='amqp://guest:guest@rabitmq:5672//' ,include=['collate.tasks'])
+#' + os.environ["HOSTNAME"] + '
+app = Celery('paragon', broker='amqp://guest:guest@localhost:5672//' ,include=['collate.tasks'])
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
